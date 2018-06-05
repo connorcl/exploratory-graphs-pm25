@@ -1,7 +1,6 @@
-### Creates a barplot exploring whether total pm25 emissions in Baltimore City
-### have decreased from 1999 to 2008
+### Creates a barplot showing PM2.5 emissions in Baltimore City for each year
 
-## Download and extract data
+## Download and extract data if necessary
 url <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
 destfile <- "NEI_data.zip"
 nei_filename <- "summarySCC_PM25.rds"
@@ -21,13 +20,13 @@ scc <- readRDS(scc_filename)
 ## Subset data to include only Baltimore City
 nei_baltimore <- subset(nei, fips == "24510")
 
+## Calculate total PM25 emissions for each year
+emissions <- with(nei_baltimore, tapply(Emissions, year, sum))
+
 ## Create barplot, saving to a png file
 png("plot2.png")
-# Create named vector of total emissions by year
-emissions <- tapply(nei_baltimore$Emissions, nei_baltimore$year, sum)
-# Plot graph
 barplot(emissions, 
         col = "burlywood2", 
-        main = expression("Baltimore City PM"[2.5]*" Emissions by Year"),
-        ylab = expression("Total PM"[2.5]*" Emissions (Tons)"))
+        main = "Baltimore City PM2.5 Emissions by Year",
+        ylab = "PM2.5 Emissions (Tons)")
 dev.off()
