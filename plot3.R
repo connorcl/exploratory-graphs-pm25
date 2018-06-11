@@ -20,18 +20,13 @@ scc <- readRDS(scc_filename)
 ## Subset data to include only Baltimore City
 nei_baltimore <- subset(nei, fips == "24510")
 
-## Create dataframe with records of total emissions, type and year
-year_type_totals <- with(nei_baltimore, tapply(Emissions, list(year, type), sum))
-year_type_totals <- data.frame(
-    Emissions = as.numeric(year_type_totals),
-    Type = rep(colnames(year_type_totals), each = 4),
-    Year = as.integer(rep(rownames(year_type_totals)), times = 4)
-)
+## Calculate total emissions by type and year
+year_type_totals <- aggregate(Emissions ~ year + type, nei_baltimore, sum)
 
 ## Create line chart, saving to a png file
 library(ggplot2)
 png("plot3.png")
-ggplot(year_type_totals, aes(Year, Emissions, color = Type)) + 
+ggplot(year_type_totals, aes(year, Emissions, color = type)) + 
     geom_line() + 
     geom_point() +
     xlab("") +
